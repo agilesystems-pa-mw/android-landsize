@@ -10,6 +10,8 @@ class MeasuredArea extends HiveObject {
   @HiveField(1)
   double area;
   @HiveField(2)
+  String image;
+  @HiveField(3)
   List<MapPoint> polygon;
 
   MeasuredArea({this.name, this.area, this.polygon});

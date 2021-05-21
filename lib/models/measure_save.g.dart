@@ -18,20 +18,22 @@ class MeasuredAreaAdapter extends TypeAdapter<MeasuredArea> {
     };
     return MeasuredArea(
       name: fields[0] as String,
-      area: fields[1] as num,
-      polygon: (fields[2] as List)?.cast<MapPoint>(),
-    );
+      area: fields[1] as double,
+      polygon: (fields[3] as List)?.cast<MapPoint>(),
+    )..image = fields[2] as String;
   }
 
   @override
   void write(BinaryWriter writer, MeasuredArea obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
       ..write(obj.area)
       ..writeByte(2)
+      ..write(obj.image)
+      ..writeByte(3)
       ..write(obj.polygon);
   }
 

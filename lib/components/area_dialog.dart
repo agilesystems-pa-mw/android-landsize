@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:areanator/models/measure_save.dart';
@@ -5,6 +6,7 @@ import 'package:areanator/utils/util.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:units_converter/Area.dart';
 
 class AreaDialog extends StatefulWidget {
@@ -53,7 +55,7 @@ class _AreaDialogState extends State<AreaDialog> {
                         builder: (innerContext) {
                           return AreaNameDialog(
                             formKey: _formKey,
-                            submit: (String name, Function close) {
+                            submit: (String name, Function close) async {
                               Box<MeasuredArea> measureBox =
                                   Hive.box<MeasuredArea>(Utils.MBOXNAME);
                               var measured = MeasuredArea(
@@ -61,7 +63,17 @@ class _AreaDialogState extends State<AreaDialog> {
                                   name: name,
                                   polygon: Utils.toMapPoints(
                                       widget.measureNew.polygons));
-                              measureBox.add(measured);
+
+                              try {
+                                var file = await saveImageFile(
+                                    widget.measureNew.imageBytes, name);
+                                measured.image = file.path;
+                                print(file);
+                                measureBox.add(measured);
+                              } catch (e) {
+                                print(e);
+                              }
+
                               close();
                               Navigator.pop(context);
                             },
@@ -88,6 +100,13 @@ class _AreaDialogState extends State<AreaDialog> {
                                 child: Text("Yes"),
                                 onPressed: () async {
                                   Navigator.of(context).pop();
+                                  try {
+                                    await File(widget.measuredArea.image)
+                                        .delete(recursive: true);
+                                  } catch (e) {
+                                    print(e);
+                                  }
+
                                   widget.measuredArea.delete();
                                   Navigator.pop(context);
                                 },
@@ -108,7 +127,7 @@ class _AreaDialogState extends State<AreaDialog> {
                       ? (widget.measureNew.imageBytes != null
                           ? Image.memory(widget.measureNew.imageBytes)
                           : null)
-                      : Text("here")),
+                      : Image.file(File(widget.measuredArea.image))),
             ),
             SizedBox(
               height: 20,
@@ -136,6 +155,16 @@ class _AreaDialogState extends State<AreaDialog> {
         ),
       ),
     );
+  }
+
+  Future<String> get _localPath async {
+    final directory = await getApplicationDocumentsDirectory();
+    return directory.path;
+  }
+
+  Future<File> saveImageFile(Uint8List image, String name) async {
+    final path = await _localPath;
+    return File('$path/$name.jpg').writeAsBytes(image);
   }
 }
 
