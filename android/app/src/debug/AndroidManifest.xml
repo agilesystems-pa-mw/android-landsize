@@ -1,0 +1,8 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.skybox.sevenreup.areanator">
+    <!-- Flutter needs it to communicate with the running application
+         to allow setting breakpoints, to provide hot reload, etc.
+    -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyCDISH2w5TV-2-o6XzLtLkN9RoM3aStBHI"/>
+</manifest>
