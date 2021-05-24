@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:share/share.dart';
 import 'package:units_converter/Area.dart';
 
 class AreaDialog extends StatefulWidget {
@@ -45,7 +46,12 @@ class _AreaDialogState extends State<AreaDialog> {
       appBar: AppBar(
         title: Text(widget.createNew ? "Area" : widget.measuredArea.name),
         actions: [
-          IconButton(icon: Icon(Icons.share), onPressed: () {}),
+          IconButton(icon: Icon(Icons.share), onPressed: () {
+            var points = widget.createNew ?  Utils.toMapPoints(widget.measureNew.polygons) : widget.measuredArea.polygon;
+            final geoJSON = Utils.createGeoJson(points);
+            print(geoJSON);
+            Share.share(geoJSON, subject: "Shared Map GeoJSON");
+          }),
           widget.createNew
               ? IconButton(
                   icon: Icon(Icons.save),

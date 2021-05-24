@@ -37,6 +37,8 @@ dependencies:
   hive: ^2.0.4
   hive_flutter: ^1.0.0
   image_gallery_saver: ^1.6.9
+  geojson_vi: ^2.0.2+1
+  share: ^2.0.1
 
 dev_dependencies:
   flutter_test:
